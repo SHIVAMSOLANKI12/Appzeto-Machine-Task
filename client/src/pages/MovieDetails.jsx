@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 import Skeleton from '../components/common/Skeleton';
 import { Star, Clock, Calendar, Globe, Play, User, Ticket } from 'lucide-react';
 import { formatTime, formatDate } from '../utils/formatters';
+import { getMovieImage } from '../utils/helpers';
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -40,7 +41,7 @@ const MovieDetails = () => {
           duration: 176,
           language: 'English',
           releaseDate: '2022-03-04',
-          posterUrl: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400',
+          posterUrl: '',
           cast: ['Robert Pattinson', 'Zoë Kravitz']
         });
         setShows([
@@ -82,8 +83,11 @@ const MovieDetails = () => {
 
   if (!movie) return <div className="text-center py-20 font-bold">Movie not found.</div>;
 
-  // Handle genre display (could be string or array)
+  // Handle genre display
   const genreList = Array.isArray(movie.genre) ? movie.genre : (movie.genre?.split(',') || []);
+  
+  // Use smart image helper
+  const moviePoster = getMovieImage(movie.title, movie.posterUrl);
 
   return (
     <motion.div 
@@ -94,9 +98,12 @@ const MovieDetails = () => {
       {/* Banner Section */}
       <section className="relative h-[450px] -mx-4 sm:-mx-6 lg:-mx-8 lg:h-[500px] overflow-hidden">
         <img 
-          src={movie.bannerURL || movie.posterUrl || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200'} 
+          src={movie.bannerURL || moviePoster} 
           alt={movie.title}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent" />
         
@@ -106,7 +113,14 @@ const MovieDetails = () => {
               variants={scaleUp}
               className="w-48 lg:w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 hidden md:block"
             >
-              <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
+              <img 
+                src={moviePoster} 
+                alt={movie.title} 
+                className="w-full h-full object-cover" 
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80';
+                }}
+              />
             </motion.div>
             
             <div className="flex-grow space-y-4">
