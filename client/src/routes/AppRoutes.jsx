@@ -10,6 +10,8 @@ import Movies from '../pages/Movies';
 import MovieDetails from '../pages/MovieDetails';
 import SeatSelection from '../pages/SeatSelection';
 import Signup from '../pages/Signup';
+import BookingSuccess from '../pages/BookingSuccess';
+import BookingHistory from '../pages/BookingHistory';
 
 
 // Admin Pages
@@ -18,7 +20,6 @@ import AddMovie from '../pages/admin/AddMovie';
 import ShowList from '../pages/admin/ShowList';
 import AddShow from '../pages/admin/AddShow';
 
-const Bookings = () => <div className="text-3xl font-bold">My Bookings</div>;
 
 
 const AdminDashboard = () => (
@@ -59,11 +60,16 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        
+        <Route path="/booking-success" element={
+          <ProtectedRoute>
+            <BookingSuccess />
+          </ProtectedRoute>
+        } />
+
         {/* User Protected Routes */}
         <Route path="/bookings" element={
           <ProtectedRoute>
-            <Bookings />
+            <BookingHistory />
           </ProtectedRoute>
         } />
       </Route>

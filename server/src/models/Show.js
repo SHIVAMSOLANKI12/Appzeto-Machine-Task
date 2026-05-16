@@ -41,7 +41,7 @@ const showSchema = new mongoose.Schema({
 });
 
 // Middleware to automatically generate 30 seats before saving a new show
-showSchema.pre('save', function (next) {
+showSchema.pre('save', async function () {
   if (this.isNew && (!this.seats || this.seats.length === 0)) {
     const seats = [];
     for (let i = 1; i <= 30; i++) {
@@ -54,7 +54,6 @@ showSchema.pre('save', function (next) {
     }
     this.seats = seats;
   }
-  next();
 });
 
 const Show = mongoose.model('Show', showSchema);

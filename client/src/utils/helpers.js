@@ -1,5 +1,6 @@
 export const getMovieImage = (title, currentUrl) => {
-  if (currentUrl && currentUrl.startsWith('http')) return currentUrl;
+  const isDefault = currentUrl?.includes('photo-1485846234645-a62644f84728');
+  if (currentUrl && currentUrl.startsWith('http') && !isDefault) return currentUrl;
 
   const t = title?.toLowerCase() || '';
   

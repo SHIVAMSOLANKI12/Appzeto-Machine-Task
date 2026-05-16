@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, Calendar, MapPin, Ticket, ChevronRight, Home, ArrowRight } from 'lucide-react';
 import Button from '../components/common/Button';
 import { formatDate, formatTime, formatCurrency } from '../utils/formatters';
+import { getMovieImage } from '../utils/helpers';
 
 const BookingSuccess = () => {
   const location = useLocation();
@@ -39,12 +40,12 @@ const BookingSuccess = () => {
           {/* Movie Info Card */}
           <div className="flex items-center gap-6">
             <img 
-              src={booking.showId?.movieId?.posterUrl || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=200'} 
+              src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl)} 
               className="w-24 h-32 rounded-2xl object-cover shadow-lg border border-slate-100" 
               alt="Poster" 
             />
             <div>
-              <h2 className="text-2xl font-black text-slate-800">{booking.showId?.movieId?.title}</h2>
+              <h2 className="text-2xl font-black text-slate-800">{booking.movieId?.title}</h2>
               <div className="flex items-center gap-2 text-slate-500 font-bold text-sm mt-1">
                 <Calendar size={14} className="text-primary-600" />
                 {formatDate(booking.showId?.time)} • {formatTime(booking.showId?.time)}

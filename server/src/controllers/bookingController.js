@@ -148,7 +148,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   // 7. Return populated booking summary
   const populatedBooking = await Booking.findById(booking._id)
-    .populate('movieId', 'title language duration')
+    .populate('movieId', 'title language duration posterUrl')
     .populate('showId', 'time');
 
   res.status(201).json({
@@ -171,7 +171,7 @@ export const getBookingHistory = asyncHandler(async (req, res) => {
 
   const total = await Booking.countDocuments({ userId });
   const bookings = await Booking.find({ userId })
-    .populate('movieId', 'title language duration genre')
+    .populate('movieId', 'title language duration genre posterUrl')
     .populate('showId', 'time')
     .sort({ createdAt: -1 })
     .skip(skip)

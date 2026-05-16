@@ -119,7 +119,7 @@ const SeatSelection = () => {
         });
         
         toast.success('Tickets booked successfully!');
-        navigate('/booking-success', { state: { booking: response.booking } });
+        navigate('/booking-success', { state: { booking: response.data } });
       }
     } catch (error) {
       if (error.response?.status === 409) {

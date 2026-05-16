@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import { API_ENDPOINTS } from '../constants/apiEndpoints';
-import { motion } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 import { Ticket, Calendar, Clock, MapPin, Receipt, ChevronRight, Filter } from 'lucide-react';
 import { formatDate, formatTime, formatCurrency } from '../utils/formatters';
+import { getMovieImage } from '../utils/helpers';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
@@ -25,8 +26,8 @@ const BookingHistory = () => {
       setLoading(true);
       const userId = user?._id || 'user_001';
       const response = await axiosInstance.get(`${API_ENDPOINTS.BOOKINGS}/${userId}?page=${page}&limit=5`);
-      setBookings(response.bookings || []);
-      setTotalPages(response.totalPages || 1);
+      setBookings(response.data || []);
+      setTotalPages(response.pagination?.pages || 1);
     } catch (error) {
       toast.error('Failed to load booking history');
     } finally {
@@ -65,7 +66,7 @@ const BookingHistory = () => {
                 <div className="p-6 md:p-8 flex gap-6 md:w-3/5 border-b md:border-b-0 md:border-r border-slate-100">
                    <div className="w-24 h-32 md:w-32 md:h-44 rounded-2xl overflow-hidden shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-500">
                      <img 
-                        src={booking.showId?.movieId?.posterUrl || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=200'} 
+                        src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl)} 
                         className="w-full h-full object-cover" 
                         alt="Poster" 
                      />
@@ -73,10 +74,10 @@ const BookingHistory = () => {
                    <div className="flex flex-col justify-center">
                      <div className="mb-4">
                         <h2 className="text-xl md:text-2xl font-black text-slate-800 leading-tight mb-1">
-                          {booking.showId?.movieId?.title || 'Unknown Movie'}
+                          {booking.movieId?.title || 'Unknown Movie'}
                         </h2>
                         <p className="text-xs font-black text-primary-600 uppercase tracking-widest">
-                          {booking.showId?.movieId?.language || 'English'}
+                          {booking.movieId?.language || 'English'}
                         </p>
                      </div>
                      <div className="space-y-2">
