@@ -24,13 +24,10 @@ const MovieDetails = () => {
         const movieRes = await movieService.getMovieDetails(id);
         setMovie(movieRes.data || movieRes);
 
-        // Fetch Shows for this movie
-        const showsRes = await axiosInstance.get(API_ENDPOINTS.SHOWS);
-        // Filter shows for this movie id
-        const movieShows = (showsRes.data || showsRes || []).filter(s => 
-          (s.movieId?._id || s.movieId) === id
-        );
-        setShows(movieShows);
+        // Fetch Shows for this movie using the specific movie endpoint
+        const showsRes = await axiosInstance.get(`${API_ENDPOINTS.SHOWS}/${id}`);
+        setShows(showsRes.data || showsRes || []);
+
       } catch (error) {
         console.error('Failed to fetch details:', error);
         // Fallback mock

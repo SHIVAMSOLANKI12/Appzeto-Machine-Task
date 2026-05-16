@@ -36,10 +36,11 @@ const SeatSelection = () => {
   const fetchShowDetails = useCallback(async (isRefresh = false) => {
     try {
       if (!isRefresh) setLoading(true);
-      const response = await axiosInstance.get(API_ENDPOINTS.ADMIN.SHOWS);
-      const foundShow = response.find(s => s._id === showId);
+      const response = await axiosInstance.get(`${API_ENDPOINTS.SHOWS}/details/${showId}`);
+      const foundShow = response.data || response;
       if (!foundShow) throw new Error('Show not found');
       setShow(foundShow);
+
     } catch (error) {
       toast.error('Failed to load seats. Returning to home.');
       navigate('/');
