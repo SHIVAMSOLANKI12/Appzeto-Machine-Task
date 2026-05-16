@@ -111,7 +111,7 @@ const Home = () => {
               <Link to={`/movie/${movie._id}`}>
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg group-hover:shadow-red-500/20">
                   <img 
-                    src={getMovieImage(movie.title, movie.posterURL)} 
+                    src={getMovieImage(movie.title, movie.posterUrl, movie.genre)} 
                     alt={movie.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={(e) => {

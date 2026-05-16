@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import Skeleton from '../../components/common/Skeleton';
 import { Plus, Edit, Trash2, Film, Star, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getMovieImage } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
 const MovieList = () => {
@@ -94,9 +95,13 @@ const MovieList = () => {
             >
               <div className="relative aspect-[2/3]">
                 <img 
-                  src={movie.posterURL || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400'} 
+                  src={getMovieImage(movie.title, movie.posterUrl, movie.genre)} 
                   alt={movie.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null; 
+                    e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80';
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                   <Button variant="secondary" size="sm" className="bg-white text-gray-900 hover:bg-gray-100 border-none">

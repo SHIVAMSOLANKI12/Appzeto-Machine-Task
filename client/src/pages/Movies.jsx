@@ -11,8 +11,9 @@ const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeGenre, setActiveGenre] = useState('All');
-
+  const [activeLanguage, setActiveLanguage] = useState('All');
   const genres = ['All', 'Action', 'Drama', 'Sci-Fi', 'Comedy', 'Thriller'];
+  const languages = ['All', 'Hindi', 'English', 'Marathi', 'Telugu'];
 
   useEffect(() => {
     fetchMovies();
@@ -28,42 +29,70 @@ const Movies = () => {
       setMovies([
         { _id: '1', title: 'The Batman', rating: 8.5, genre: 'Action', posterURL: '', language: 'English' },
         { _id: '2', title: 'Inception', rating: 8.8, genre: 'Sci-Fi', posterURL: '', language: 'English' },
-        { _id: '3', title: 'Interstellar', rating: 8.7, genre: 'Sci-Fi', posterURL: '', language: 'English' },
-        { _id: '4', title: 'Joker', rating: 8.4, genre: 'Drama', posterURL: '', language: 'English' },
+        { _id: '3', title: 'The Nun II', rating: 7.2, genre: 'Horror', posterURL: '', language: 'English' },
+        { _id: '4', title: 'Jawan', rating: 8.4, genre: 'Action', posterURL: '', language: 'Hindi' },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredMovies = activeGenre === 'All' 
-    ? movies 
-    : movies.filter(m => m.genre?.includes(activeGenre));
+  const filteredMovies = movies.filter(m => {
+    const genreMatch = activeGenre === 'All' || m.genre?.includes(activeGenre);
+    const langMatch = activeLanguage === 'All' || m.language === activeLanguage;
+    return genreMatch && langMatch;
+  });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header & Filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900">Movies In Mumbai</h1>
-          <p className="text-gray-500 mt-1">Discover the latest blockbusters hitting the big screen</p>
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">Movies In Mumbai</h1>
+            <p className="text-gray-500 font-medium mt-2">Discover the latest blockbusters hitting the big screen</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest">
+            <Filter size={16} /> Filters
+          </div>
         </div>
         
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-          {genres.map(genre => (
-            <button
-              key={genre}
-              onClick={() => setActiveGenre(genre)}
-              className={`
-                px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap
-                ${activeGenre === genre 
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-200' 
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-red-600 hover:text-red-600'}
-              `}
-            >
-              {genre}
-            </button>
-          ))}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
+            <span className="text-xs font-black text-gray-400 uppercase min-w-[60px]">Genre:</span>
+            {genres.map(genre => (
+              <button
+                key={genre}
+                onClick={() => setActiveGenre(genre)}
+                className={`
+                  px-5 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap
+                  ${activeGenre === genre 
+                    ? 'bg-red-600 text-white shadow-lg shadow-red-200' 
+                    : 'bg-white text-gray-600 border border-gray-100 hover:border-red-200 hover:text-red-600'}
+                `}
+              >
+                {genre}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
+            <span className="text-xs font-black text-gray-400 uppercase min-w-[60px]">Language:</span>
+            {languages.map(lang => (
+              <button
+                key={lang}
+                onClick={() => setActiveLanguage(lang)}
+                className={`
+                  px-5 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap
+                  ${activeLanguage === lang 
+                    ? 'bg-gray-900 text-white shadow-lg shadow-gray-200' 
+                    : 'bg-white text-gray-600 border border-gray-100 hover:border-gray-900 hover:text-gray-900'}
+                `}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -105,10 +134,11 @@ const Movies = () => {
               <Link to={`/movie/${movie._id}`}>
                 <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-4 shadow-md group-hover:shadow-2xl transition-all duration-300">
                   <img 
-                    src={getMovieImage(movie.title, movie.posterURL)} 
+                    src={getMovieImage(movie.title, movie.posterUrl, movie.genre)} 
                     alt={movie.title} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
+                      e.target.onerror = null;
                       e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80';
                     }}
                   />

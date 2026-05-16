@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import Skeleton from '../../components/common/Skeleton';
 import { Plus, Trash2, Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getMovieImage } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
 const ShowList = () => {
@@ -25,8 +26,8 @@ const ShowList = () => {
       console.error('Failed to fetch shows:', error);
       // Mock data
       setShows([
-        { _id: '1', movie: { title: 'The Batman' }, startTime: '2026-05-20T18:00:00.000Z', totalSeats: 30, availableSeats: 25 },
-        { _id: '2', movie: { title: 'Inception' }, startTime: '2026-05-20T21:00:00.000Z', totalSeats: 30, availableSeats: 10 },
+        { _id: '1', movieId: { title: 'The Batman' }, time: '2026-05-20T18:00:00.000Z', totalSeats: 30, availableSeats: 25 },
+        { _id: '2', movieId: { title: 'Inception' }, time: '2026-05-20T21:00:00.000Z', totalSeats: 30, availableSeats: 10 },
       ]);
     } finally {
       setLoading(false);
@@ -91,20 +92,20 @@ const ShowList = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-10 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                        {show.movie?.posterURL && <img src={show.movie.posterURL} alt="" className="w-full h-full object-cover" />}
+                        <img src={getMovieImage(show.movieId?.title, show.movieId?.posterUrl, show.movieId?.genre)} alt="" className="w-full h-full object-cover" />
                       </div>
-                      <span className="font-semibold text-gray-900">{show.movie?.title}</span>
+                      <span className="font-semibold text-gray-900">{show.movieId?.title}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1">
                         <Calendar size={14} className="text-gray-400" />
-                        {new Date(show.startTime).toLocaleDateString()}
+                        {new Date(show.time).toLocaleDateString()}
                       </div>
                       <div className="flex items-center gap-1 font-medium text-gray-900">
                         <Clock size={14} className="text-gray-400" />
-                        {new Date(show.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(show.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                   </td>

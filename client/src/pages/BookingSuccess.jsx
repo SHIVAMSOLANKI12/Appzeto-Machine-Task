@@ -40,7 +40,7 @@ const BookingSuccess = () => {
           {/* Movie Info Card */}
           <div className="flex items-center gap-6">
             <img 
-              src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl)} 
+              src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl, booking.movieId?.genre)} 
               className="w-24 h-32 rounded-2xl object-cover shadow-lg border border-slate-100" 
               alt="Poster" 
             />

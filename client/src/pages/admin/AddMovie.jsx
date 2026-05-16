@@ -26,8 +26,8 @@ const AddMovie = () => {
       duration: '',
       language: '',
       releaseDate: '',
-      posterURL: '',
-      bannerURL: '',
+      posterUrl: '',
+      bannerUrl: '',
       cast: [{ name: '', role: '', image: '' }]
     }
   });
@@ -143,14 +143,14 @@ const AddMovie = () => {
             <Input 
               label="Poster URL" 
               placeholder="https://..."
-              {...register('posterURL', { required: 'Poster URL is required' })}
-              error={errors.posterURL?.message}
+              {...register('posterUrl', { required: 'Poster URL is required' })}
+              error={errors.posterUrl?.message}
             />
             <Input 
               label="Banner URL" 
               placeholder="https://..."
-              {...register('bannerURL', { required: 'Banner URL is required' })}
-              error={errors.bannerURL?.message}
+              {...register('bannerUrl', { required: 'Banner URL is required' })}
+              error={errors.bannerUrl?.message}
             />
           </div>
         </div>

@@ -22,7 +22,7 @@ const AddShow = () => {
   } = useForm({
     defaultValues: {
       movieId: '',
-      startTime: '',
+      time: '',
       totalSeats: 30 // Fixed as per requirements
     }
   });
@@ -98,8 +98,8 @@ const AddShow = () => {
           <Input 
             label="Show Start Time" 
             type="datetime-local"
-            {...register('startTime', { required: 'Start time is required' })}
-            error={errors.startTime?.message}
+            {...register('time', { required: 'Start time is required' })}
+            error={errors.time?.message}
           />
 
           <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex gap-3">

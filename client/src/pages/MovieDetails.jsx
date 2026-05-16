@@ -87,7 +87,7 @@ const MovieDetails = () => {
   const genreList = Array.isArray(movie.genre) ? movie.genre : (movie.genre?.split(',') || []);
   
   // Use smart image helper
-  const moviePoster = getMovieImage(movie.title, movie.posterUrl);
+  const moviePoster = getMovieImage(movie.title, movie.posterUrl, movie.genre);
 
   return (
     <motion.div 

@@ -66,7 +66,7 @@ const BookingHistory = () => {
                 <div className="p-6 md:p-8 flex gap-6 md:w-3/5 border-b md:border-b-0 md:border-r border-slate-100">
                    <div className="w-24 h-32 md:w-32 md:h-44 rounded-2xl overflow-hidden shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-500">
                      <img 
-                        src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl)} 
+                        src={getMovieImage(booking.movieId?.title, booking.movieId?.posterUrl, booking.movieId?.genre)} 
                         className="w-full h-full object-cover" 
                         alt="Poster" 
                      />
