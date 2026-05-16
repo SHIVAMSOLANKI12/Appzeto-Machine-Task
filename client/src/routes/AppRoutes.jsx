@@ -19,28 +19,8 @@ import MovieList from '../pages/admin/MovieList';
 import AddMovie from '../pages/admin/AddMovie';
 import ShowList from '../pages/admin/ShowList';
 import AddShow from '../pages/admin/AddShow';
-
-
-
-const AdminDashboard = () => (
-  <div className="space-y-8">
-    <div className="bg-red-600 text-white p-10 rounded-3xl shadow-xl shadow-red-200">
-      <h2 className="text-4xl font-black mb-2">Welcome, Admin!</h2>
-      <p className="text-red-100">Manage your theater operations with ease.</p>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Link to="/admin/movies" className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
-        <h3 className="text-xl font-bold mb-2 group-hover:text-red-600">Movies Management</h3>
-        <p className="text-gray-500">Add, edit and delete movies from the catalog.</p>
-      </Link>
-      <Link to="/admin/shows" className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
-        <h3 className="text-xl font-bold mb-2 group-hover:text-red-600">Shows Scheduling</h3>
-        <p className="text-gray-500">Schedule movies to theaters and manage seats.</p>
-      </Link>
-    </div>
-  </div>
-);
-const NotFound = () => <div className="text-3xl font-bold text-center py-20">404 - Page Not Found</div>;
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import NotFound from '../pages/NotFound';
 
 
 

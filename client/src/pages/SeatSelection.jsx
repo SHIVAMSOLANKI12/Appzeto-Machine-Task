@@ -19,6 +19,7 @@ import Button from '../components/common/Button';
 import { formatCurrency, formatTime } from '../utils/formatters';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { SEAT_PRICES, getSeatPrice, getSeatTier } from '../constants/seatPricing';
 
 // Reusable Seat Component
 const Seat = ({ seat, isSelected, onToggle, disabled }) => {
@@ -30,8 +31,9 @@ const Seat = ({ seat, isSelected, onToggle, disabled }) => {
   };
 
   const getTierColor = () => {
-    if (seat.seatNumber <= 10) return 'bg-emerald-400';
-    if (seat.seatNumber <= 20) return 'bg-indigo-400';
+    const tier = getSeatTier(seat.seatNumber);
+    if (tier === 'Classic') return 'bg-emerald-400';
+    if (tier === 'Prime') return 'bg-indigo-400';
     return 'bg-rose-400';
   };
 
@@ -52,7 +54,7 @@ const Seat = ({ seat, isSelected, onToggle, disabled }) => {
       {/* Modern Tooltip */}
       {!seat.isBooked && !seat.isLocked && (
         <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-slate-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 z-50 whitespace-nowrap shadow-xl">
-          {seat.seatNumber <= 10 ? 'Classic • ₹150' : seat.seatNumber <= 20 ? 'Prime • ₹180' : 'Recliner • ₹200'}
+          {getSeatTier(seat.seatNumber)} • ₹{getSeatPrice(seat.seatNumber)}
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
         </div>
       )}
@@ -124,11 +126,7 @@ const SeatSelection = () => {
   };
 
   const totals = useMemo(() => {
-    const total = selectedSeats.reduce((acc, num) => {
-      if (num <= 10) return acc + 150;
-      if (num <= 20) return acc + 180;
-      return acc + 200;
-    }, 0);
+    const total = selectedSeats.reduce((acc, num) => acc + getSeatPrice(num), 0);
     return { amount: total, count: selectedSeats.length };
   }, [selectedSeats]);
 
@@ -255,9 +253,9 @@ const SeatSelection = () => {
           {/* Pricing Tiers */}
           <div className="mt-20 flex flex-wrap gap-12 justify-center pt-12 border-t border-slate-100">
             {[
-              { label: 'Classic', price: 150, color: 'bg-emerald-400', desc: 'Rows 1-10' },
-              { label: 'Prime', price: 180, color: 'bg-indigo-400', desc: 'Rows 11-20' },
-              { label: 'Recliner', price: 200, color: 'bg-rose-400', desc: 'Rows 21-30' }
+              { label: 'Classic', price: SEAT_PRICES.CLASSIC, color: 'bg-emerald-400', desc: 'Rows 1-10' },
+              { label: 'Prime', price: SEAT_PRICES.PRIME, color: 'bg-indigo-400', desc: 'Rows 11-20' },
+              { label: 'Recliner', price: SEAT_PRICES.RECLINER, color: 'bg-rose-400', desc: 'Rows 21-30' }
             ].map(tier => (
               <div key={tier.label} className="flex flex-col items-center gap-2 group/tier">
                 <div className="flex items-center gap-3">
