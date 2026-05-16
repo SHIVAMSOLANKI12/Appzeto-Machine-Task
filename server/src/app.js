@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 // Route imports
 import adminRoutes from './routes/adminRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
 import showRoutes from './routes/showRoutes.js';
 import seatRoutes from './routes/seatRoutes.js';
@@ -38,6 +39,7 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
 app.use('/api/seats', seatRoutes);

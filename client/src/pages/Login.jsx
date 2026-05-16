@@ -4,8 +4,10 @@ import { scaleUp } from '../animations/variants';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import api from '../api/axios';
+import { API_ENDPOINTS } from '../constants/apiEndpoints';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,21 +24,22 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Mocking login logic for foundation
-    setTimeout(() => {
-      const is_admin = email.includes('admin');
-      const userData = { 
-        id: '1', 
-        name: is_admin ? 'Admin User' : 'John Doe', 
-        email, 
-        role: is_admin ? 'admin' : 'user' 
-      };
-      
-      login(userData);
-      toast.success(`Welcome back, ${userData.name}!`);
-      navigate(from, { replace: true });
+    try {
+      const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, {
+        email,
+        password
+      });
+
+      if (response.data.success) {
+        login(response.data.data);
+        toast.success(`Welcome back, ${response.data.data.name}!`);
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Invalid email or password');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -87,17 +90,10 @@ const Login = () => {
             Sign In
           </Button>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-            <p className="text-xs text-gray-500 text-center uppercase font-bold tracking-widest mb-2">Test Credentials</p>
-            <div className="flex justify-around text-xs text-gray-600">
-              <code className="bg-gray-100 p-1 rounded">admin@bms.com</code>
-              <code className="bg-gray-100 p-1 rounded">user@bms.com</code>
-            </div>
-          </div>
         </form>
 
         <p className="mt-8 text-center text-gray-600 text-sm">
-          Don't have an account? <a href="#" className="text-red-600 font-bold hover:underline">Sign Up</a>
+          Don't have an account? <Link to="/signup" className="text-red-600 font-bold hover:underline">Sign Up</Link>
         </p>
       </motion.div>
     </div>

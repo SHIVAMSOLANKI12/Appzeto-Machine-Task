@@ -9,6 +9,7 @@ import Login from '../pages/Login';
 import Movies from '../pages/Movies';
 import MovieDetails from '../pages/MovieDetails';
 import SeatSelection from '../pages/SeatSelection';
+import Signup from '../pages/Signup';
 
 
 // Admin Pages
@@ -56,6 +57,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         
         {/* User Protected Routes */}
