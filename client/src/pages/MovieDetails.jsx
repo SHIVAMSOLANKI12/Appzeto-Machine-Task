@@ -2,24 +2,37 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { movieService } from '../services/movieService';
-import { fadeIn, staggerContainer, scaleUp } from '../animations/variants';
+import axiosInstance from '../api/axiosInstance';
+import { API_ENDPOINTS } from '../constants/apiEndpoints';
+import { fadeIn, scaleUp } from '../animations/variants';
 import Button from '../components/common/Button';
 import Skeleton from '../components/common/Skeleton';
-import { Star, Clock, Calendar, Globe, Play, User } from 'lucide-react';
+import { Star, Clock, Calendar, Globe, Play, User, Ticket } from 'lucide-react';
+import { formatTime, formatDate } from '../utils/formatters';
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         setLoading(true);
-        const response = await movieService.getMovieDetails(id);
-        setMovie(response.data || response);
+        // Fetch Movie Details
+        const movieRes = await movieService.getMovieDetails(id);
+        setMovie(movieRes.data || movieRes);
+
+        // Fetch Shows for this movie
+        const showsRes = await axiosInstance.get(API_ENDPOINTS.SHOWS);
+        // Filter shows for this movie id
+        const movieShows = (showsRes.data || showsRes || []).filter(s => 
+          (s.movieId?._id || s.movieId) === id
+        );
+        setShows(movieShows);
       } catch (error) {
-        console.error('Failed to fetch movie details:', error);
+        console.error('Failed to fetch details:', error);
         // Fallback mock
         setMovie({
           _id: id,
@@ -37,12 +50,23 @@ const MovieDetails = () => {
             { name: 'Zoë Kravitz', role: 'Selina Kyle / Catwoman', image: 'https://ui-avatars.com/api/?name=ZK' }
           ]
         });
+        setShows([
+          { _id: 'show_001', startTime: new Date().setHours(18, 0, 0, 0), totalSeats: 30, availableSeats: 25 },
+          { _id: 'show_002', startTime: new Date().setHours(21, 0, 0, 0), totalSeats: 30, availableSeats: 10 }
+        ]);
       } finally {
         setLoading(false);
       }
     };
     fetchDetails();
   }, [id]);
+
+  const scrollToShows = () => {
+    const element = document.getElementById('available-shows');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   if (loading) {
     return (
@@ -84,14 +108,7 @@ const MovieDetails = () => {
               variants={scaleUp}
               className="w-48 lg:w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 hidden md:block"
             >
-              <img 
-                src={movie.posterURL} 
-                alt={movie.title} 
-                className="w-full h-full object-cover" 
-                onError={(e) => {
-                  e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80';
-                }}
-              />
+              <img src={movie.posterURL} alt={movie.title} className="w-full h-full object-cover" />
             </motion.div>
             
             <div className="flex-grow space-y-4">
@@ -122,9 +139,7 @@ const MovieDetails = () => {
                 </div>
               </div>
               <div className="pt-4 flex gap-4">
-                <Link to={`/book/${movie._id}`}>
-                  <Button size="lg" className="px-12 h-14 text-lg">Book Tickets</Button>
-                </Link>
+                <Button size="lg" className="px-12 h-14 text-lg" onClick={scrollToShows}>Book Tickets</Button>
                 <Button variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-14">
                   <Play size={20} className="mr-2" /> Watch Trailer
                 </Button>
@@ -137,6 +152,45 @@ const MovieDetails = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-12">
+          {/* Shows Section */}
+          <section id="available-shows" className="space-y-6 scroll-mt-24">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-100 text-red-600 rounded-lg">
+                <Ticket size={24} />
+              </div>
+              <h2 className="text-2xl font-black text-gray-900">Available Shows</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {shows.length > 0 ? (
+                shows.map(show => (
+                  <Link 
+                    key={show._id} 
+                    to={`/book/${show._id}`}
+                    className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="text-lg font-black text-gray-900">{formatTime(show.startTime)}</p>
+                      <p className="text-sm text-gray-500 font-medium">{formatDate(show.startTime)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${show.availableSeats < 5 ? 'text-red-500' : 'text-green-600'}`}>
+                        {show.availableSeats} Seats Left
+                      </p>
+                      <Button variant="ghost" size="sm" className="group-hover:bg-red-600 group-hover:text-white transition-colors">
+                        Select
+                      </Button>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full p-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 text-center">
+                  <p className="text-gray-500 font-bold">No shows available for this movie currently.</p>
+                </div>
+              )}
+            </div>
+          </section>
+
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900">About the Movie</h2>
             <p className="text-gray-600 leading-relaxed text-lg">

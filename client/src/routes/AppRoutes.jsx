@@ -8,6 +8,8 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Movies from '../pages/Movies';
 import MovieDetails from '../pages/MovieDetails';
+import SeatSelection from '../pages/SeatSelection';
+
 
 // Admin Pages
 import MovieList from '../pages/admin/MovieList';
@@ -48,7 +50,13 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
+        <Route path="/book/:showId" element={
+          <ProtectedRoute>
+            <SeatSelection />
+          </ProtectedRoute>
+        } />
         <Route path="/login" element={<Login />} />
+
         
         {/* User Protected Routes */}
         <Route path="/bookings" element={
