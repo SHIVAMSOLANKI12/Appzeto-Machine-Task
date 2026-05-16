@@ -36,20 +36,16 @@ const MovieDetails = () => {
           title: 'The Batman',
           description: 'When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city\'s hidden corruption and question his family\'s involvement.',
           rating: 8.5,
-          genre: 'Action, Crime, Drama',
+          genre: ['Action', 'Crime', 'Drama'],
           duration: 176,
           language: 'English',
           releaseDate: '2022-03-04',
-          posterURL: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400',
-          bannerURL: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200',
-          cast: [
-            { name: 'Robert Pattinson', role: 'Bruce Wayne / Batman', image: 'https://ui-avatars.com/api/?name=RP' },
-            { name: 'Zoë Kravitz', role: 'Selina Kyle / Catwoman', image: 'https://ui-avatars.com/api/?name=ZK' }
-          ]
+          posterUrl: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400',
+          cast: ['Robert Pattinson', 'Zoë Kravitz']
         });
         setShows([
-          { _id: 'show_001', startTime: new Date().setHours(18, 0, 0, 0), totalSeats: 30, availableSeats: 25 },
-          { _id: 'show_002', startTime: new Date().setHours(21, 0, 0, 0), totalSeats: 30, availableSeats: 10 }
+          { _id: 'show_001', time: new Date().setHours(18, 0, 0, 0), totalSeats: 30, availableSeats: 25 },
+          { _id: 'show_002', time: new Date().setHours(21, 0, 0, 0), totalSeats: 30, availableSeats: 10 }
         ]);
       } finally {
         setLoading(false);
@@ -84,6 +80,11 @@ const MovieDetails = () => {
     );
   }
 
+  if (!movie) return <div className="text-center py-20 font-bold">Movie not found.</div>;
+
+  // Handle genre display (could be string or array)
+  const genreList = Array.isArray(movie.genre) ? movie.genre : (movie.genre?.split(',') || []);
+
   return (
     <motion.div 
       initial="initial"
@@ -93,7 +94,7 @@ const MovieDetails = () => {
       {/* Banner Section */}
       <section className="relative h-[450px] -mx-4 sm:-mx-6 lg:-mx-8 lg:h-[500px] overflow-hidden">
         <img 
-          src={movie.bannerURL || movie.posterURL} 
+          src={movie.bannerURL || movie.posterUrl || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200'} 
           alt={movie.title}
           className="w-full h-full object-cover"
         />
@@ -105,12 +106,12 @@ const MovieDetails = () => {
               variants={scaleUp}
               className="w-48 lg:w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 hidden md:block"
             >
-              <img src={movie.posterURL} alt={movie.title} className="w-full h-full object-cover" />
+              <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
             </motion.div>
             
             <div className="flex-grow space-y-4">
               <div className="flex flex-wrap gap-2">
-                {movie.genre?.split(',').map(g => (
+                {genreList.map(g => (
                   <span key={g} className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-full uppercase tracking-wider border border-white/10">
                     {g.trim()}
                   </span>
@@ -120,7 +121,7 @@ const MovieDetails = () => {
               <div className="flex flex-wrap items-center gap-6 text-gray-300 font-medium">
                 <div className="flex items-center gap-2">
                   <Star size={20} className="text-red-500 fill-red-500" />
-                  <span className="text-white text-xl font-bold">{movie.rating}/10</span>
+                  <span className="text-white text-xl font-bold">{movie.rating || 'N/A'}/10</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock size={18} />
@@ -167,8 +168,8 @@ const MovieDetails = () => {
                     className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all flex justify-between items-center"
                   >
                     <div>
-                      <p className="text-lg font-black text-gray-900">{formatTime(show.startTime)}</p>
-                      <p className="text-sm text-gray-500 font-medium">{formatDate(show.startTime)}</p>
+                      <p className="text-lg font-black text-gray-900">{formatTime(show.time)}</p>
+                      <p className="text-sm text-gray-500 font-medium">{formatDate(show.time)}</p>
                     </div>
                     <div className="text-right">
                       <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${show.availableSeats < 5 ? 'text-red-500' : 'text-green-600'}`}>
@@ -199,17 +200,24 @@ const MovieDetails = () => {
             <section className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900">Cast & Crew</h2>
               <div className="flex gap-8 overflow-x-auto pb-4 no-scrollbar">
-                {movie.cast.map((person, idx) => (
-                  <div key={idx} className="flex-shrink-0 text-center space-y-3 group">
-                    <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border-2 border-gray-100 group-hover:border-red-600 transition-colors">
-                      <img src={person.image || `https://ui-avatars.com/api/?name=${person.name}`} alt={person.name} className="w-full h-full object-cover" />
+                {movie.cast.map((person, idx) => {
+                  const isObject = typeof person === 'object';
+                  const name = isObject ? person.name : person;
+                  const role = isObject ? person.role : 'Actor';
+                  const image = isObject ? person.image : null;
+                  
+                  return (
+                    <div key={idx} className="flex-shrink-0 text-center space-y-3 group">
+                      <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border-2 border-gray-100 group-hover:border-red-600 transition-colors">
+                        <img src={image || `https://ui-avatars.com/api/?name=${name}`} alt={name} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">{name}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold tracking-tighter">{role}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-gray-900">{person.name}</p>
-                      <p className="text-xs text-gray-500 uppercase font-semibold tracking-tighter">{person.role}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}
